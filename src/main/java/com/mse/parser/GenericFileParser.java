@@ -13,11 +13,25 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The core engine of the framework responsible for converting flat files into Java objects.
+ * It utilizes reflection to inspect class metadata and map file columns to object fields.
+ */
 public class GenericFileParser {
 
     private static final Logger log =
             LoggerFactory.getLogger(GenericFileParser.class);
 
+    /**
+     * Parses a delimited resource file into a list of strongly-typed objects.
+     * This method reads the file line-by-line, skips blank lines, and handles malformed data
+     * by logging an error and continuing to the next record.
+     * * @param <T> The generic type of the class being parsed
+     * @param resourceName The path to the file relative to the classpath root
+     * @param clazz The model class containing @FileSource and @Column annotations
+     * @return A list of successfully instantiated and populated objects
+     * @throws ParsingException If the class is missing required annotations or the file is not found
+     */
     public <T> List<T> parse(String resourceName, Class<T> clazz) {
 
         FileSource fileSource = clazz.getAnnotation(FileSource.class);
@@ -60,6 +74,7 @@ public class GenericFileParser {
                     continue;
                 }
 
+                // Uses Pattern.quote to handle special regex characters like the pipe symbol
                 String[] tokens = line.split(java.util.regex.Pattern.quote(delimiter));
 
                 try {
@@ -83,6 +98,7 @@ public class GenericFileParser {
 
                         field.setAccessible(true);
 
+                        // Delegates type conversion to the TypeConverter utility
                         Object convertedValue =
                                 TypeConverter.convert(
                                         rawValue,
@@ -95,6 +111,7 @@ public class GenericFileParser {
                     result.add(instance);
 
                 } catch (Exception e) {
+                    // Logs malformed lines and continues parsing to ensure robustness
                     log.error(
                             "Skipping malformed line {} in {}: {}",
                             lineNumber,
