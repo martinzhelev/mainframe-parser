@@ -1,0 +1,12 @@
+John Doe,john.doe@gmail.com,25
+Alice Smith,alice.smith@yahoo.com,18
+Bob Stone,bob@company.org,99
+
+,missing.name@gmail.com,30
+NoEmail,,40
+TooYoung,young@gmail.com,17
+TooOld,old@gmail.com,120
+BadEmail,bad-email-format,35
+Whitespace Name,   spaced@gmail.com,45
+NullAge,age@gmail.com,
+TextAge,text@gmail.com,thirty
